@@ -32,7 +32,7 @@
               results
               state])
            [:fail spec state])
-         (catch Throwable ex
+         (catch js/Error ex
            [:fail spec state ex]))
     [:pass spec state]))
 
@@ -46,7 +46,7 @@
           results
           state
           result])
-       (catch Throwable ex
+       (catch js/Error ex
          [:fail spec state ex])))
 
 (defmethod step-command-runner :next-state
@@ -61,7 +61,7 @@
         (pr-str result) ;; this is for debug purposes, as it
                         ;; effectively takes a snapshot of the object
         ]
-       (catch Throwable ex
+       (catch js/Error ex
          [:fail spec state ex])))
 
 (defmethod step-command-runner :postcondition-check
@@ -72,7 +72,7 @@
           results
           next-state]
          [:fail spec next-state])
-       (catch Throwable ex
+       (catch js/Error ex
          [:fail spec next-state ex])))
 
 ;; terminal states, so return `nil`
