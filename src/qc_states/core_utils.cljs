@@ -3,6 +3,8 @@
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :refer-macros [for-all]]
             [clojure.test.check.rose-tree :as rose :refer [make-rose]]
+            [qc-states.check-async :refer [quick-check-async]]
+            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
             [qc-states.command-runner :as r]
             [qc-states.command-utils :as u]
             [qc-states.command-verifier :as v]
@@ -116,13 +118,14 @@
   ([spec] (spec->property spec {:tries 1}))
   ([spec {:keys [tries]}]
    (for-all [commands (generate-valid-commands spec)]
-     (loop [tries (or tries 1)]
-       (if (pos? tries)
-         (let [results (r/run-commands spec commands)]
-           (if (r/passed? results)
-             (recur (dec tries))
-             (throw (make-failure-exception results))))
-         true)))))
+            (go-catching
+             (loop [tries (or tries 1)]
+               (if (pos? tries)
+                 (let [results (<! (r/run-commands spec commands))]
+                   (if (r/passed? results)
+                     (recur (dec tries))
+                     (throw (make-failure-exception results))))
+                 true))))))
 
 (defn format-command [[sym-var [{name :name} _ args] :as cmd]]
   (str (pr-str sym-var) " = " (pr-str (cons name args))))
@@ -189,7 +192,7 @@
   returns the full quick-check result."
   ([specification] (run-specification specification nil))
   ([specification {:keys [num-tests max-size seed tries]}]
-   (quick-check (or num-tests 100)
+   (quick-check-async (or num-tests 100)
                 (spec->property specification {:tries tries})
                 :seed seed
                 :max-size (or max-size 200))))

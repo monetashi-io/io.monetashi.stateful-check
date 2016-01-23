@@ -1,9 +1,11 @@
 (ns qc-states.command-runner
   (:require [clojure.walk :as walk]
+            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
             [qc-states.command-utils :as u]
             [qc-states.symbolic-values
              :refer
-             [->RootVar get-real-value SymbolicValue]]))
+             [->RootVar get-real-value SymbolicValue]])
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defmulti step-command-runner
   "Step the command runner state machine one step. Each state in the
@@ -38,16 +40,20 @@
 
 (defmethod step-command-runner :run-command
   [_ spec [sym-var [command args raw-args] :as current] command-list results state]
-  (try (let [result (u/run-command command args)
-             results (assoc results sym-var result)]
-         [:next-state spec
-          current
-          command-list
-          results
-          state
-          result])
-       (catch js/Error ex
-         [:fail spec state ex])))
+  (go
+    (try (let [result (u/run-command command args)
+               result (if (chan? result)
+                        (<? result)
+                        result)
+               results (assoc results sym-var result)]
+           [:next-state spec
+            current
+            command-list
+            results
+            state
+            result])
+         (catch js/Error ex
+           [:fail spec state ex]))))
 
 (defmethod step-command-runner :next-state
   [_ spec [sym-var [command args raw-args] :as current] command-list results state result]
@@ -98,7 +104,24 @@
         state (if setup-fn
                 (state-fn setup-value)
                 (state-fn))]
-    (->> [:next-command spec command-list results state]
+    ;; NOTE: every step-command-runner will return the parameters to
+    ;;       its next call. Nice, how do we make this async??
+    ;; x => (f x)  => (f (f x))
+
+    ;; implement an async-iterate? Which will realize the async values first
+    (go-loop [params [:next-command spec command-list results state]
+           step-results []]
+      ;; when we get new parms, run the next step
+      (if-let [params' (apply step-command-runner params)]
+        (let  [params' (if (chan? params')
+                         (<! params')
+                         params')]
+          (recur params' (conj step-results params')))
+        ;; else just return our results
+        step-results))
+
+
+    #_(->> [:next-command spec command-list results state]
          (iterate (partial apply step-command-runner))
          (take-while (complement nil?))
          doall)))

@@ -1,5 +1,6 @@
 (ns qc-states.core
   (:require [cljs.test :as t]
+            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
             [clojure.test.check :refer [quick-check]]
             [qc-states.core-utils :as utils]))
 
@@ -30,7 +31,8 @@
   the stacktrace of any exceptions"
   ([specification] (specification-correct? specification nil))
   ([specification options]
-   (true? (:result (utils/run-specification specification options)))))
+   (go-catching
+    (true? (:result (<? (utils/run-specification specification options)))))))
 ;; We need this to be a separate form, for some reason. The attr-map
 ;; in defn doesn't work if you use the multi-arity form.
 (alter-meta! #'specification-correct? assoc :arglists

@@ -5,7 +5,8 @@
                  [org.clojure/clojurescript "1.7.228"]
                  [org.clojure/test.check "0.9.0"]
 
-                 [com.cemerick/piggieback "0.2.1"]]
+                 [com.cemerick/piggieback "0.2.1"]
+                 [org.clojure/core.async "0.2.374"]]
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 
