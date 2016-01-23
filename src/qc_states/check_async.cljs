@@ -4,8 +4,7 @@
             [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
             [clojure.test.check.random :as random]
             [clojure.test.check.rose-tree :as rose]
-            [clojure.test.check :as tc]
-            [taoensso.timbre :as timbre]))
+            [clojure.test.check :as tc]))
 
 (defn quick-check-async
   "Tests `property` `num-tests` times.
