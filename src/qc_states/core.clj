@@ -6,11 +6,11 @@
          options# ~options
          results# (qc-states.core-utils/run-specification spec# options#)]
      (if (true? (:result results#))
-       (t/do-report {:type :pass,
+       (cljs.test/do-report {:type :pass,
                      :message ~msg,
                      :expected :pass,
                      :actual :pass})
-       (t/do-report {:type :fail,
+       (cljs.test/do-report {:type :fail,
                      :message (with-out-str
                                 (if-let [msg# ~msg]
                                   (println msg#))
