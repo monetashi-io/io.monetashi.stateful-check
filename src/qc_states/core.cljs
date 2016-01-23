@@ -35,24 +35,3 @@
 ;; in defn doesn't work if you use the multi-arity form.
 (alter-meta! #'specification-correct? assoc :arglists
              (:arglists (meta #'utils/run-specification)))
-
-#_ (defmethod t/assert-expr 'specification-correct?
-  [msg [_ specification options]]
-  `(let [spec# ~specification
-         options# ~options
-         results# (utils/run-specification spec# options#)]
-     (if (true? (:result results#))
-       (t/do-report {:type :pass,
-                     :message ~msg,
-                     :expected :pass,
-                     :actual :pass})
-       (t/do-report {:type :fail,
-                     :message (with-out-str
-                                (if-let [msg# ~msg]
-                                  (println msg#))
-                                (->> {:first-case? (:print-first-case? options#)
-                                      :stacktraces? (:print-stacktraces? options#)}
-                                     (utils/print-test-results spec# results#))),
-                     :expected :pass,
-                     :actual :fail}))
-     (true? (:result results#))))
