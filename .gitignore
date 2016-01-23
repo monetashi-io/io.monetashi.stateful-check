@@ -11,3 +11,5 @@ pom.xml
 /.cljs_node_repl/
 /.cljs_rhino_repl/
 /.nrepl-port
+\#*\#
+.\#*
