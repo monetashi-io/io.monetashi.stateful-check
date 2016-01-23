@@ -1,6 +1,6 @@
-(defproject qc-states "0.1.0-SNAPSHOT"
-  :description "FIXME: write this!"
-  :url "http://example.com/FIXME"
+(defproject boymaas/qc-states "0.1.0-SNAPSHOT"
+  :description "cljs stateful-check conversion"
+  :url "http://www.boymaas.nl/"
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
                  [org.clojure/test.check "0.9.0"]
