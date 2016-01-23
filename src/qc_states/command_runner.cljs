@@ -94,37 +94,45 @@
   results/state. Returns a lazy seq of states from the command
   runner."
   [spec command-list]
-  (let [state-fn (or (:real/initial-state spec)
-                     (:initial-state spec)
-                     (constantly nil))
-        setup-fn (:real/setup spec)
-        setup-value (if setup-fn (setup-fn))
-        results (if setup-fn
-                  {(->RootVar "setup") setup-value})
-        state (if setup-fn
-                (state-fn setup-value)
-                (state-fn))]
-    ;; NOTE: every step-command-runner will return the parameters to
-    ;;       its next call. Nice, how do we make this async??
-    ;; x => (f x)  => (f (f x))
+  (go-catching
+   (let [state-fn (or (:real/initial-state spec)
+                      (:initial-state spec)
+                      (constantly nil))
+         setup-fn (:real/setup spec)
+         setup-value (if setup-fn (setup-fn))
+         setup-value (if (chan? setup-value)
+                       (<! setup-value)
+                       setup-value)
+         results (if setup-fn
+                   {(->RootVar "setup") setup-value})
+         state (if setup-fn
+                 (state-fn setup-value)
+                 (state-fn))
+         state (if (chan? state)
+                 (<! state)
+                 state)
+         ]
+     ;; NOTE: every step-command-runner will return the parameters to
+     ;;       its next call. Nice, how do we make this async??
+     ;; x => (f x)  => (f (f x))
 
-    ;; implement an async-iterate? Which will realize the async values first
-    (go-loop [params [:next-command spec command-list results state]
-           step-results []]
-      ;; when we get new parms, run the next step
-      (if-let [params' (apply step-command-runner params)]
-        (let  [params' (if (chan? params')
-                         (<! params')
-                         params')]
-          (recur params' (conj step-results params')))
-        ;; else just return our results
-        step-results))
+     ;; implement an async-iterate? Which will realize the async values first
+     (loop [params [:next-command spec command-list results state]
+               step-results []]
+       ;; when we get new parms, run the next step
+       (if-let [params' (apply step-command-runner params)]
+         (let  [params' (if (chan? params')
+                          (<! params')
+                          params')]
+           (recur params' (conj step-results params')))
+         ;; else just return our results
+         step-results))
 
 
-    #_(->> [:next-command spec command-list results state]
-         (iterate (partial apply step-command-runner))
-         (take-while (complement nil?))
-         doall)))
+     #_(->> [:next-command spec command-list results state]
+            (iterate (partial apply step-command-runner))
+            (take-while (complement nil?))
+            doall))))
 
 (defn passed?
   "Determine whether a list of command runner states represents a
