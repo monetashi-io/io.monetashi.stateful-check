@@ -10,23 +10,6 @@
             [clojure.test.check :as tc]))
 
 
-(defn failure-async
-  [property failing-rose-tree trial-number size seed]
-  (let [root (rose/root failing-rose-tree)
-        result (:result root)
-        failing-args (:args root)]
-
-    (ct/report-failure property result trial-number failing-args)
-
-    {:result result
-     :seed seed
-     :failing-size size
-     :num-tests (inc trial-number)
-     :fail (vec failing-args)
-     :shrunk (tc/shrink-loop failing-rose-tree)}))
-
-
-
 (defn quick-check-async
   "Tests `property` `num-tests` times.
   Takes optional keys `:seed` and `:max-size`. The seed parameter
