@@ -52,18 +52,26 @@
 ;; Generative specification
 ;;
 
-(def specification
+(def specification-succeed
   {:commands {:add #'add-command
               :remove #'remove-command
               :contains? #'contains?-command
               :empty? #'empty?-command
               :empty #'empty-command}
    :initial-state (constantly #{})
-   :real/setup #(reset! global-state #{1})})
+   :real/setup #(reset! global-state #{})})
+
+(def specification-fail (assoc specification-succeed :initial-state (constantly #{:problem})))
 
 ;; NOTE: this macroexpands to a real test
-(deftest atomic-set-test
-  (is (specification-correct? specification) "test-message") )
+(deftest atomic-set-test-succeed
+  (is (specification-correct? specification-succeed) "test-message") )
+
+
+(deftest atomic-set-test-fail
+  (is (specification-correct? specification-fail
+                              {:print-first-case? true
+                               :print-stacktraces? true}) "test-message") )
 
 ;; NOTE: this is direct call
 #_ (<!prn (specification-correct? specification))
@@ -71,3 +79,7 @@
 
 ;; NOTE: what becomes is specification correct?
 #_ (macroexpand '(is (specification-correct? specification)))
+
+
+;; NOTE: test error reporting
+#_ (t/run-tests)
