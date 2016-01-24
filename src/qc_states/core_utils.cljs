@@ -9,7 +9,8 @@
             [qc-states.command-utils :as u]
             [qc-states.command-verifier :as v]
             [qc-states.generator-utils :refer-macros [gen-do]]
-            [qc-states.symbolic-values :refer [->RootVar]])
+            [qc-states.symbolic-values :refer [->RootVar]]
+            [taoensso.timbre :as timbre])
   (:require-macros [qc-states.core-utils :refer [assert-val]]))
 
 (def setup-name "setup")
@@ -117,6 +118,19 @@
   "Turn a specification into a testable property."
   ([spec] (spec->property spec {:tries 1}))
   ([spec {:keys [tries]}]
+   ;; NOTE: for all calls the block
+   ;;       using the generate-valid-commands generator
+   ;;       using the spec. Building a rose tree, with a list
+   ;;       of commands
+
+   ;; [[:commands ..] [:results ...]]
+
+   ;; when all suecceeded will have
+   ;; [[:commands ..] [true true ture ...]]
+
+   ;; when failed, will ahve
+   ;; [[:commands ..] [ex-info]]
+
    (for-all [commands (generate-valid-commands spec)]
             (go-catching
              (loop [tries (or tries 1)]
@@ -169,7 +183,7 @@
        (println "Unexpected exception thrown in test runner -" ex)
        (prn (.-stack ex))))))
 
-(defn print-test-results
+(defn build-test-results-str
   "Print the results of a test.check test in a more helpful form (each
   command with its corresponding output).
 
@@ -177,14 +191,16 @@
   failing test. This means that the commands will be run against the
   live system."
   [spec results {:keys [first-case? stacktraces?]}]
-  (when-not (true? (:result results))
-    (when first-case?
-      (println "First failing test case:")
-      (print-command-results (-> results :result ex-data :results) stacktraces?)
-      (println "Shrunk:"))
-    (print-command-results (-> results :shrunk :result ex-data :results) stacktraces?)
-    (println "Seed: " (:seed results))
-    (println "Visited: " (-> results :shrunk :total-nodes-visited))))
+
+  (with-out-str
+    (when-not (true? (:result results))
+      (when first-case?
+        (println "First failing test case:")
+        (print-command-results (-> results :result ex-data :results) stacktraces?)
+        (println "Shrunk:"))
+      (print-command-results (-> results :shrunk :result ex-data :results) stacktraces?)
+      (println "Seed: " (:seed results))
+      (println "Visited: " (-> results :shrunk :total-nodes-visited)))))
 
 (defn run-specification
   "Run a specification. This will convert the spec into a property and

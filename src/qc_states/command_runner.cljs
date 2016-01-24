@@ -4,7 +4,8 @@
             [qc-states.command-utils :as u]
             [qc-states.symbolic-values
              :refer
-             [->RootVar get-real-value SymbolicValue]])
+             [->RootVar get-real-value SymbolicValue]]
+            [taoensso.timbre :as timbre])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (defmulti step-command-runner

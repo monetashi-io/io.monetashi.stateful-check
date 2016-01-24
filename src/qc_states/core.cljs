@@ -2,6 +2,7 @@
   (:require [cljs.test :as t]
             [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
             [clojure.test.check :refer [quick-check]]
+            [cljs.core.async :refer [<! >! timeout ]]
             [qc-states.core-utils :as utils]))
 
 (defn ^{:deprecated "0.3.0"} reality-matches-model
@@ -12,10 +13,10 @@
 
 (defn print-test-results
   #_{:deprecated "0.3.0",
-   :doc (:doc (meta #'utils/print-test-results))
-   :arglists (:arglists (meta #'utils/print-test-results))}
+   :doc (:doc (meta #'utils/build-test-results-str))
+   :arglists (:arglists (meta #'utils/build-test-results-str))}
   [spec results options]
-  (utils/print-test-results spec results options))
+  (print (utils/build-test-results-str spec results options)))
 
 (defn specification-correct?
   "Test whether or not the specification matches reality. This

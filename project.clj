@@ -6,7 +6,8 @@
                  [org.clojure/test.check "0.9.0"]
 
                  [com.cemerick/piggieback "0.2.1"]
-                 [org.clojure/core.async "0.2.374"]]
+                 [org.clojure/core.async "0.2.374"]
+                 [com.taoensso/timbre "4.2.1"]]
 
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
 

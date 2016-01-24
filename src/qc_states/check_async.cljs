@@ -1,10 +1,31 @@
 (ns qc-states.check-async
   (:require [clojure.test.check.generators :as gen]
             [clojure.test.check.clojure-test :as ct]
+            [clojure.test.check.rose-tree :as rose :refer (make-rose)]
             [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
+            [cljs.core.async :refer [<! >! timeout ]]
+            [taoensso.timbre :as timbre]
             [clojure.test.check.random :as random]
             [clojure.test.check.rose-tree :as rose]
             [clojure.test.check :as tc]))
+
+
+(defn failure-async
+  [property failing-rose-tree trial-number size seed]
+  (let [root (rose/root failing-rose-tree)
+        result (:result root)
+        failing-args (:args root)]
+
+    (ct/report-failure property result trial-number failing-args)
+
+    {:result result
+     :seed seed
+     :failing-size size
+     :num-tests (inc trial-number)
+     :fail (vec failing-args)
+     :shrunk (tc/shrink-loop failing-rose-tree)}))
+
+
 
 (defn quick-check-async
   "Tests `property` `num-tests` times.
@@ -32,12 +53,26 @@
          (tc/complete property num-tests created-seed)
          (let [[size & rest-size-seq] size-seq
                [r1 r2] (random/split rstate)
+
+               ;; Call our generator, building our
+               ;; rose tree
                result-map-rose (gen/call-gen property r1 size)
                result-map (rose/root result-map-rose)
-               result (<? (:result result-map))
+               result (if (chan? (:result result-map))
+                        (<! (:result result-map))
+                        (:result result-map))
+
+
+               ;; Realize root, needed as
+               ;; we may only take once from
+               ;; our channel down the line
+               result-map (assoc result-map :result result)
+               result-map-rose (make-rose result-map (rose/children result-map-rose))
+
                args (:args result-map)]
            (if (tc/not-falsey-or-exception? result)
              (do
                (ct/report-trial property so-far num-tests)
                (recur (inc so-far) rest-size-seq r2))
-             (tc/failure property result-map-rose so-far size created-seed))))))))
+             (do
+               (tc/failure property result-map-rose so-far size created-seed)))))))))
