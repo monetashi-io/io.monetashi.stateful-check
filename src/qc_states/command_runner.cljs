@@ -73,14 +73,19 @@
 
 (defmethod step-command-runner :postcondition-check
   [_ spec [sym-var [command args raw-args] :as current] command-list results next-state prev-state result _]
-  (try (if (u/check-postcondition command prev-state next-state args result)
-         [:next-command spec
-          command-list
-          results
-          next-state]
-         [:fail spec next-state])
-       (catch js/Error ex
-         [:fail spec next-state ex])))
+  (go
+    (try (let [outcome (u/check-postcondition command prev-state next-state args result)
+               outcome (if (chan? outcome)
+                        (<? outcome)
+                        outcome)]
+           (if outcome
+             [:next-command spec
+              command-list
+              results
+              next-state]
+             [:fail spec next-state]))
+         (catch js/Error ex
+           [:fail spec next-state ex]))))
 
 ;; terminal states, so return `nil`
 (defmethod step-command-runner :fail [_ spec state & _]
