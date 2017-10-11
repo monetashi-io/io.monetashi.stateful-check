@@ -16,4 +16,7 @@
   :npm {:dependencies [[source-map-support "0.4.0"]]}
   :source-paths ["src" "target/classes"]
   :clean-targets ["out" "release"]
-  :target-path "target")
+  :target-path "target"
+  :cljsbuild
+  {:builds []}
+  )
