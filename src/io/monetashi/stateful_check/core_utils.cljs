@@ -1,17 +1,17 @@
-(ns qc-states.core-utils
+(ns io.monetashi.stateful-check.core-utils
   (:require [clojure.test.check :refer [quick-check]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :refer-macros [for-all]]
             [clojure.test.check.rose-tree :as rose :refer [make-rose]]
-            [qc-states.check-async :refer [quick-check-async]]
-            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
-            [qc-states.command-runner :as r]
-            [qc-states.command-utils :as u]
-            [qc-states.command-verifier :as v]
-            [qc-states.generator-utils :refer-macros [gen-do]]
-            [qc-states.symbolic-values :refer [->RootVar]]
+            [io.monetashi.stateful-check.check-async :refer [quick-check-async]]
+            [io.monetashi.stateful-check.async :refer [chan?] :refer-macros [go-catching <?]]
+            [io.monetashi.stateful-check.command-runner :as r]
+            [io.monetashi.stateful-check.command-utils :as u]
+            [io.monetashi.stateful-check.command-verifier :as v]
+            [io.monetashi.stateful-check.generator-utils :refer-macros [gen-do]]
+            [io.monetashi.stateful-check.symbolic-values :refer [->RootVar]]
             [taoensso.timbre :as timbre])
-  (:require-macros [qc-states.core-utils :refer [assert-val]]))
+  (:require-macros [io.monetashi.stateful-check.core-utils :refer [assert-val]]))
 
 (def setup-name "setup")
 

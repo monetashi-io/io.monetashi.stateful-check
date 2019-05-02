@@ -1,4 +1,4 @@
-(ns qc-states.async
+(ns io.monetashi.stateful-check.async
   (:require  [cljs.core.async :refer [take! <! >! timeout ]]
              [cljs.core.async.impl.protocols :as impl]
              [cljs.pprint :refer [pprint]])

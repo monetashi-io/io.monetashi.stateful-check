@@ -1,4 +1,4 @@
-(ns qc-states.symbolic-values)
+(ns io.monetashi.stateful-check.symbolic-values)
 
 (defprotocol SymbolicValue
   (get-real-value [this real-values]

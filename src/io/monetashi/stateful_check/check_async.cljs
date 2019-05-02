@@ -1,8 +1,8 @@
-(ns qc-states.check-async
+(ns io.monetashi.stateful-check.check-async
   (:require [clojure.test.check.generators :as gen]
             [clojure.test.check.clojure-test :as ct]
             [clojure.test.check.rose-tree :as rose :refer (make-rose)]
-            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
+            [io.monetashi.stateful-check.async :refer [chan?] :refer-macros [go-catching <?]]
             [cljs.core.async :refer [<! >! timeout ]]
             [taoensso.timbre :as timbre]
             [clojure.test.check.random :as random]

@@ -1,5 +1,5 @@
-(ns qc-states.command-utils
-  (:require [qc-states.generator-utils :refer [to-generator]]
+(ns io.monetashi.stateful-check.command-utils
+  (:require [io.monetashi.stateful-check.generator-utils :refer [to-generator]]
             [clojure.test.check.generators :as gen]
             [clojure.walk :as walk]))
 

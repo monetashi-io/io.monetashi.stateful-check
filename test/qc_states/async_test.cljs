@@ -1,10 +1,10 @@
-(ns qc-states.async-test
+(ns io.monetashi.stateful-check.async-test
   (:require  [cljs.test :refer-macros [is deftest]]
              [clojure.test.check.generators :as gen]
              [cljs.core.async :refer [<! >! timeout ]]
-             [qc-states.async :refer (<!prn) :refer-macros [<? go-catching]]
-             [qc-states.core :refer [specification-correct?] :refer-macros []]
-             [qc-states.core-utils :refer [run-specification] :refer-macros []]
+             [io.monetashi.stateful-check.async :refer (<!prn) :refer-macros [<? go-catching]]
+             [io.monetashi.stateful-check.core :refer [specification-correct?] :refer-macros []]
+             [io.monetashi.stateful-check.core-utils :refer [run-specification] :refer-macros []]
 
              [cljs.test :as t]
              [taoensso.timbre :as timbre])

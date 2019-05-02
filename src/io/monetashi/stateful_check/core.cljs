@@ -1,12 +1,12 @@
-(ns qc-states.core
+(ns io.monetashi.stateful-check.core
   (:require [cljs.test :as t]
-            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
+            [io.monetashi.stateful-check.async :refer [chan?] :refer-macros [go-catching <?]]
             [clojure.test.check :refer [quick-check]]
             [cljs.core.async :refer [<! >! timeout ]]
-            [qc-states.core-utils :as utils]))
+            [io.monetashi.stateful-check.core-utils :as utils]))
 
 (defn ^{:deprecated "0.3.0"} reality-matches-model
-  "Create a property which checks a given qc-states
+  "Create a property which checks a given io.monetashi.stateful-check
   specification."
   [spec]
   (utils/spec->property spec))

@@ -1,4 +1,4 @@
-(ns qc-states.async)
+(ns io.monetashi.stateful-check.async)
 
 (defmacro <? [ch]
   `(throw-err (cljs.core.async/<! ~ch)))

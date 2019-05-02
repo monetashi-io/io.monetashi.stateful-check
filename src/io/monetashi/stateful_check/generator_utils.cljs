@@ -1,4 +1,4 @@
-(ns qc-states.generator-utils
+(ns io.monetashi.stateful-check.generator-utils
   (:require [clojure.test.check.generators :as gen]))
 
 (defn to-generator

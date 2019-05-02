@@ -1,4 +1,4 @@
-(ns qc-states.core)
+(ns io.monetashi.stateful-check.core)
 
 (defmethod cljs.test/assert-expr 'specification-correct?
   [_ msg [_ specification options]]
@@ -6,7 +6,7 @@
                    (cljs.core.async.macros/go
                      (let [spec# ~specification
                            options# ~options
-                           results# (cljs.core.async/<! (qc-states.core-utils/run-specification spec# options#))
+                           results# (cljs.core.async/<! (io.monetashi.stateful-check.core-utils/run-specification spec# options#))
                            ]
                        (if (true? (:result results#))
                          (cljs.test/do-report {:type :pass,
@@ -22,7 +22,7 @@
 
                                (let [msg (->> {:first-case? (:print-first-case? options#)
                                                :stacktraces? (:print-stacktraces? options#)}
-                                              (qc-states.core-utils/build-test-results-str spec# results#))]
+                                              (io.monetashi.stateful-check.core-utils/build-test-results-str spec# results#))]
                                  (cljs.test/do-report {:type :fail,
                                                        :message msg,
                                                        :expected :pass,

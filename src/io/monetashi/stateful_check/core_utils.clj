@@ -1,4 +1,4 @@
-(ns qc-states.core-utils)
+(ns io.monetashi.stateful-check.core-utils)
 
 (defmacro assert-val
   ([val]

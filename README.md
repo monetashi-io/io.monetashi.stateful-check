@@ -1,4 +1,4 @@
-# qc-states
+# io.monetashi.stateful-check
 
 Quick conversion of stateful-check to cljs
 

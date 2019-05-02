@@ -1,8 +1,8 @@
-(ns qc-states.command-runner
+(ns io.monetashi.stateful-check.command-runner
   (:require [clojure.walk :as walk]
-            [qc-states.async :refer [chan?] :refer-macros [go-catching <?]]
-            [qc-states.command-utils :as u]
-            [qc-states.symbolic-values
+            [io.monetashi.stateful-check.async :refer [chan?] :refer-macros [go-catching <?]]
+            [io.monetashi.stateful-check.command-utils :as u]
+            [io.monetashi.stateful-check.symbolic-values
              :refer
              [->RootVar get-real-value SymbolicValue]]
             [taoensso.timbre :as timbre])

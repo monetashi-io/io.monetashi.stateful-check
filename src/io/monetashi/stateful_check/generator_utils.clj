@@ -1,4 +1,4 @@
-(ns qc-states.generator-utils)
+(ns io.monetashi.stateful-check.generator-utils)
 
 (defn is-let? [forms]
   (and (keyword? (first forms))

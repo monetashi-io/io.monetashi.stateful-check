@@ -1,7 +1,7 @@
-(ns qc-states.atomic-set-test
+(ns io.monetashi.stateful-check.atomic-set-test
   (:require  [cljs.test :refer-macros [is deftest]]
              [clojure.test.check.generators :as gen]
-             [qc-states.core :refer [specification-correct?]]
+             [io.monetashi.stateful-check.core :refer [specification-correct?]]
              [cljs.test :as t]))
 
 ;;

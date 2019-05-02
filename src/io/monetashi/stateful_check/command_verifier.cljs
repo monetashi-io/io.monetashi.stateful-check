@@ -1,6 +1,6 @@
-(ns qc-states.command-verifier
-  (:require [qc-states.command-utils :as u]
-            [qc-states.symbolic-values :as symbolic-values :refer [SymbolicValue]]))
+(ns io.monetashi.stateful-check.command-verifier
+  (:require [io.monetashi.stateful-check.command-utils :as u]
+            [io.monetashi.stateful-check.symbolic-values :as symbolic-values :refer [SymbolicValue]]))
 
 (defmulti step-command-verifier
   "Step the command verifier state machine one step. Each state in the
