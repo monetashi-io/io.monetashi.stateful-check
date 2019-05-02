@@ -21,7 +21,10 @@
 
 (def add-command
   {:model/args (fn [_] [gen/nat])
-   :real/command #(swap! global-state conj %)
+   ;; async function!
+   :real/command #(go
+                    (<! (timeout 50))
+                    (swap! global-state conj %))
    :next-state (fn [state [arg] _]
                  (conj (or state #{}) arg))})
 
@@ -74,7 +77,7 @@
                                :print-stacktraces? true}) "test-message") )
 
 ;; NOTE: this is direct call
-#_ (<!prn (specification-correct? specification))
+#_ (<!prn (specification-correct? specification-succeed))
 #_ (<!prn (go (:shrunk (<! (run-specification specification)))))
 
 ;; NOTE: what becomes is specification correct?
